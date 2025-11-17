@@ -255,11 +255,10 @@ namespace StarterAssets
 			// A origem é a posição do player + um pouco pra cima (offset) para não começar dentro do chão
 			if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit, 2.0f))
 			{
-				
 				// 3. Verifica a etiqueta do objeto que o raio acertou
 				if (hit.collider.CompareTag("Wood"))
 				{
-				
+					
 					currentClips = woodClips;
 				}
 				
