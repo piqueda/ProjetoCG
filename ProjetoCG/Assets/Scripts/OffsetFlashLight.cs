@@ -35,7 +35,7 @@ public class OffsetFlashLight : MonoBehaviour
 
         transform.rotation = Quaternion.Slerp(transform.rotation, followCam.transform.rotation, moveSpeed * Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) || Input.GetMouseButtonDown(1))
         {
             if (flashLightIsOn) audioSource.PlayOneShot(flash_Light_offSound);
             else audioSource.PlayOneShot(flash_Light_onSound);

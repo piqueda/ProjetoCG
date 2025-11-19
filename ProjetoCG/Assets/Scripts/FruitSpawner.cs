@@ -15,21 +15,25 @@ public class FruitSpawner : MonoBehaviour
     public float raycastStartHeight = 10f; 
     
     [HideInInspector] public float fruitColliderRadius;
-    // Define quais camadas o Raycast deve atingir (ex: Terrain ou Ground)
+    // Define quais camadas são consideradas "Chão válido"
     public LayerMask groundLayer; 
+
+    // ---------------------------------------------------------
+    // NOVO: Limite de tentativas para evitar travamento do Unity
+    private int maxSpawnAttemptsPerFruit = 10; 
+    // ---------------------------------------------------------
 
     void Start()
     {
         SphereCollider collider = fruitPrefab.GetComponent<SphereCollider>();
-    if (collider != null)
-    {
-        // O raio define a distância do centro até a borda
-        fruitColliderRadius = collider.radius * fruitPrefab.transform.localScale.x;
-    }
-    else
-    {
-        Debug.LogError("O Prefab da Fruta deve ter um SphereCollider anexado!");
-    }
+        if (collider != null)
+        {
+            fruitColliderRadius = collider.radius * fruitPrefab.transform.localScale.x;
+        }
+        else
+        {
+            Debug.LogError("O Prefab da Fruta deve ter um SphereCollider anexado!");
+        }
 
         SpawnFruitsOnGround();
     }
@@ -37,42 +41,66 @@ public class FruitSpawner : MonoBehaviour
     public void SpawnFruitsOnGround()
     {
         int numberOfFruitsToSpawn = Random.Range(minFruits, maxFruits);
+        int fruitsSpawnedCount = 0;
 
-        for (int i = 0; i < numberOfFruitsToSpawn; i++)
+        // Loop principal: continua até atingir a quantidade desejada
+        // (ou se atingirmos um limite de segurança para não travar o jogo)
+        int safetyLoopBreak = 0; 
+
+        while (fruitsSpawnedCount < numberOfFruitsToSpawn && safetyLoopBreak < 100)
         {
-            // 1. Gera uma posição aleatória no plano XZ (horizontal)
-            Vector3 randomOffset = Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPosition = transform.position + new Vector3(randomOffset.x, 0, randomOffset.y);
+            bool spawnedSuccessfully = false;
 
-            // 2. Define o ponto inicial do Raycast (acima da posição de spawn)
-            Vector3 rayStart = new Vector3(spawnPosition.x, spawnPosition.y + raycastStartHeight, spawnPosition.z);
-            
-            RaycastHit hit;
-            
-            // 3. Lança o Raycast para baixo
-            if (Physics.Raycast(rayStart, Vector3.down, out hit, raycastStartHeight + 1f, groundLayer))
+            // Tenta posicionar ESSA fruta específica até X vezes
+            for (int attempt = 0; attempt < maxSpawnAttemptsPerFruit; attempt++)
             {
-                // Se o Raycast atingir algo na camada 'groundLayer', usamos essa altura.
-                Vector3 finalPosition = hit.point;
+                // 1. Gera posição aleatória
+                Vector3 randomOffset = Random.insideUnitCircle * spawnRadius;
+                Vector3 spawnPosition = transform.position + new Vector3(randomOffset.x, 0, randomOffset.y);
 
-                finalPosition.y += fruitColliderRadius;
+                // 2. Ponto do Raycast
+                Vector3 rayStart = new Vector3(spawnPosition.x, spawnPosition.y + raycastStartHeight, spawnPosition.z);
+                RaycastHit hit;
 
-                // 4. Instancia a fruta na posição exata do chão
-                GameObject newFruit = Instantiate(
-                    fruitPrefab, 
-                    finalPosition, 
-                    Quaternion.identity 
-                );
-
-                // 5. ATIVAÇÃO INTELIGENTE: A fruta já está no chão, então ela deve estar FIXA.
-                FruitDropController dropController = newFruit.GetComponent<FruitDropController>();
-                if (dropController != null)
+                // 3. Verifica se bate no chão (GroundLayer)
+                if (Physics.Raycast(rayStart, Vector3.down, out hit, raycastStartHeight + 50f, groundLayer))
                 {
-                    // Chamamos a função Drop, mas agora ela SÓ precisa aplicar o impulso/giro visual
-                    // e manter a fruta cinemática (fixa), se configurado no Controller.
-                    dropController.InitialPlacement(); 
+                    // Achou chão válido!
+                    Vector3 finalPosition = hit.point;
+                    finalPosition.y += fruitColliderRadius;
+
+                    GameObject newFruit = Instantiate(fruitPrefab, finalPosition, Quaternion.identity);
+
+                    FruitDropController dropController = newFruit.GetComponent<FruitDropController>();
+                    if (dropController != null)
+                    {
+                        dropController.InitialPlacement(); 
+                    }
+
+                    spawnedSuccessfully = true;
+                    fruitsSpawnedCount++;
+                    break; // Sai do loop de tentativas e vai para a próxima fruta
                 }
             }
+
+            if (!spawnedSuccessfully)
+            {
+                Debug.LogWarning("Não foi possível encontrar um local válido para uma fruta após várias tentativas.");
+            }
+
+            safetyLoopBreak++;
         }
+
+        Debug.Log($"Total de frutas spawnadas: {fruitsSpawnedCount} de {numberOfFruitsToSpawn} desejadas.");
+    }
+
+    // ---------------------------------------------------------
+    // NOVO: Desenha a área no Editor para você ver onde as frutas podem cair
+    // ---------------------------------------------------------
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        // Desenha um círculo na altura do objeto spawner
+        Gizmos.DrawWireSphere(transform.position, spawnRadius);
     }
 }
