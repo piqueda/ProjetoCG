@@ -85,7 +85,7 @@ public class FruitSpawner : MonoBehaviour
 
             if (!spawnedSuccessfully)
             {
-                Debug.LogWarning("Não foi possível encontrar um local válido para uma fruta após várias tentativas.");
+                //Debug.LogWarning("Não foi possível encontrar um local válido para uma fruta após várias tentativas.");
             }
 
             safetyLoopBreak++;

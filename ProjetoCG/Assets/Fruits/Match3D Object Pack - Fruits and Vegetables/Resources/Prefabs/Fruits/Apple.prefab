@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 9088936243273337580}
   - component: {fileID: 6057613892218715762}
   - component: {fileID: -1407846914559082467}
-  - component: {fileID: -9188130582254818023}
   - component: {fileID: -2548509045962098416}
+  - component: {fileID: -3240337824902473153}
   m_Layer: 0
   m_Name: Apple
   m_TagString: Untagged
@@ -175,22 +175,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialSpinTorque: 5
---- !u!114 &-9188130582254818023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4008610799542497148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe727f3d851a4a4693378138da1ce8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collectSound: {fileID: 8300000, guid: 335fdc3f017e9a94d8572da004e2aed4, type: 3}
-  volume: 10
-  appleHeldPrefab: {fileID: 4008610799542497148, guid: 298fd09ed3efb7240aa6042948648c95, type: 3}
-  pickupRange: 2
 --- !u!82 &-2548509045962098416
 AudioSource:
   m_ObjectHideFlags: 0
@@ -288,3 +272,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-3240337824902473153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4008610799542497148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe727f3d851a4a4693378138da1ce8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectSound: {fileID: 8300000, guid: 335fdc3f017e9a94d8572da004e2aed4, type: 3}
+  volume: 1
+  appleHeldPrefab: {fileID: 4008610799542497148, guid: 298fd09ed3efb7240aa6042948648c95, type: 3}
+  pickupRange: 3

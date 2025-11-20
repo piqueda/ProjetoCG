@@ -18,18 +18,21 @@ public class FruitCollect : MonoBehaviour
 
     void Start()
     {
+       
         audioSource = GetComponent<AudioSource>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
+        
         if (player == null || collected) return;
 
         float dist = Vector3.Distance(transform.position, player.position);
-
+       
         if (dist <= pickupRange)
         {
+           
             Collect();
         }
     }

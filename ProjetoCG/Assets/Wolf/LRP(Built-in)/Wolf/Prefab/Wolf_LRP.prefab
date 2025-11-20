@@ -189,3 +189,7 @@ MonoBehaviour:
   runSpeed: 6.5
   minWaitTime: 2
   maxWaitTime: 6
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  modelTransform: {fileID: 0}
